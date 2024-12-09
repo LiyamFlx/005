@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EngageSense - Redefining Audience Engagement Analysis">
+    <title>EngageSense - Real-Time Engagement Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js for advanced charts -->
+    <style>
+        /* (CSS remains the same) */
+    </style>
+</head>
+<body>
+    <header>
+        <h1>EngageSense</h1>
+        <p>Real-Time Audience Engagement Analysis</p>
+    </header>
+
+    <div class="container">
+        <!-- Welcome Section -->
+        <section>
+            <h2>Welcome to EngageSense</h2>
+            <p>Start measuring audience engagement like never before.</p>
+            <button class="button" onclick="startAnalysis()">Start Analysis</button>
+        </section>
+
+        <!-- Progress Bar -->
+        <section id="progressSection" style="display:none;">
+            <h2>Analyzing...</h2>
+            <div class="progress-bar">
+                <span id="progressBar"></span>
+            </div>
+        </section>
+
+        <!-- Metrics Dashboard -->
+        <section id="dashboardSection" style="display:none;">
+            <h2>Engagement Metrics</h2>
+            <div class="dashboard" id="metricsDashboard">
+                <!-- Metrics dynamically injected here -->
+            </div>
+        </section>
+
+        <!-- Chart Visualization -->
+        <section id="chartSection" style="display:none;">
+            <h2>Engagement Visualization</h2>
+            <canvas id="engagementChart"></canvas>
+        </section>
+    </div>
+
+    <footer>
+        EngageSense &copy; 2024. All Rights Reserved.
+    </footer>
+
+    <script>
+        // Simulated fetch from backend API
+        async function fetchMetrics() {
+            // Simulating API response with dummy data
+            return await fetch('/api/metrics') // Replace with actual API endpoint
+                .then(response => response.json())
+                .catch(() => ({
+                    physical: 85,
+                    emotional: 92,
+                    mental: 78,
+                    spiritual: 88
+                }));
+        }
+
+        // Start analysis simulation
+        async function startAnalysis() {
+            document.getElementById('progressSection').style.display = 'block';
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = '100%';
+
+            setTimeout(async () => {
+                const metrics = await fetchMetrics();
+
+                document.getElementById('progressSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'block';
+
+                updateMetrics(metrics);
+                renderChart(metrics);
+            }, 3000);
+        }
+
+        // Update dashboard metrics
+        function updateMetrics(metrics) {
+            const dashboard = document.getElementById('metricsDashboard');
+            dashboard.innerHTML = '';
+
+            Object.keys(metrics).forEach(metric => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>${metric.charAt(0).toUpperCase() + metric.slice(1)}</h3>
+                    <p>${metrics[metric]}%</p>
+                `;
+                dashboard.appendChild(card);
+            });
+        }
+
+        // Render engagement chart
+        function renderChart(metrics) {
+            document.getElementById('chartSection').style.display = 'block';
+            const ctx = document.getElementById('engagementChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(metrics),
+                    datasets: [{
+                        label: 'Engagement Levels',
+                        data: Object.values(metrics),
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
