@@ -3,268 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Analyze real-time audience engagement with AI using EngageSense Dashboard.">
-    <meta name="keywords" content="EngageSense, Audio Engagement Analyzer, AI, Real-time Analysis">
-    <title>EngageSense - Audio Engagement Analyzer</title>
-    <script src="https://cdn.tailwindcss.com" async></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" async></script>
+    <title>EngageSense Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --background-color: #1a202c;
-            --text-color: #e2e8f0;
-            --scrollbar-width: 8px;
-            --scrollbar-track-bg: #2d3748;
-            --scrollbar-thumb-bg: #4a5568;
-            --scrollbar-thumb-radius: 4px;
-            --spinner-border: rgba(255, 255, 255, 0.3);
-            --spinner-border-top: #fff;
-            --section-border-bottom: #4a5568;
-        }
         body {
-            background-color: var(--background-color);
-            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
         }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: var(--scrollbar-width);
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: var(--scrollbar-track-bg);
+        .step {
+            display: none;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb-bg);
-            border-radius: var(--scrollbar-thumb-radius);
+        .step.active {
+            display: block;
         }
-        .spinner {
-            border: 4px solid var(--spinner-border);
-            border-top: 4px solid var(--spinner-border-top);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .section-title {
-            border-bottom: 2px solid var(--section-border-bottom);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
+        button:disabled {
+            background-color: #ccc;
+        }
+        .file-upload {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .chart-container {
+            margin: 20px 0;
+        }
+        .audio-controls {
+            text-align: center;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-6 custom-scrollbar">
-    <div class="container mx-auto max-w-7xl">
-        <header class="mb-8">
-            <h1 class="text-5xl font-extrabold text-center text-white mb-6">EngageSense Dashboard</h1>
-            <p class="text-center text-gray-400 text-lg">Analyze real-time audience engagement with AI</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Audio Controls -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-4">
-                <h2 class="text-2xl font-semibold section-title text-white">Audio Controls</h2>
-                <div class="flex flex-wrap gap-4">
-                    <input type="file" id="audioUpload" accept="audio/*" class="hidden">
-                    <button id="uploadButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">Upload Audio</button>
-                    <button id="recordButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded">Start Recording</button>
-                    <button id="stopButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded" disabled>Stop Recording</button>
-                    <button id="analyzeButton" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded">Analyze Audio</button>
-                </div>
-                <audio id="audioPreview" controls class="mt-6 w-full" aria-label="Audio Preview"></audio>
-                <div id="loadingSpinner" class="hidden mt-6 flex justify-center items-center" role="status" aria-live="polite">
-                    <div class="spinner"></div>
-                </div>
+<body>
+    <div class="container">
+        <!-- Step 1: Welcome Screen -->
+        <div id="step1" class="step active">
+            <h1>Welcome to EngageSense Player</h1>
+            <p>Test the energy and the pulse of your audience.</p>
+            <p>Analyze and measure audience engagement in real-time. Upload audio or stream live, and EngageSense Player uses advanced analytics to provide instant feedback.</p>
+            <div class="navigation">
+                <button id="next1">Next &rarr;</button>
             </div>
+        </div>
 
-            <!-- Overall Engagement Score -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-2">
-                <h2 class="text-2xl font-semibold section-title text-white">Overall Engagement</h2>
-                <div class="text-center">
-                    <canvas id="overallEngagementChart" class="mx-auto" width="200" height="200"></canvas>
-                    <p id="overallEngagementScore" class="text-4xl font-bold text-blue-400 mt-6">0</p>
-                </div>
+        <!-- Step 2: Upload Track -->
+        <div id="step2" class="step">
+            <h1>Upload Track</h1>
+            <div class="file-upload" id="fileUpload">
+                <p>Drag & drop your files here</p>
+                <p>or</p>
+                <button id="browseFiles">Browse files</button>
             </div>
-
-            <!-- Engagement Dimensions -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-2">
-                <h2 class="text-2xl font-semibold section-title text-white">Engagement Dimensions</h2>
-                <canvas id="engagementDimensionsChart" class="w-full"></canvas>
+            <audio id="audioPreview" controls class="audio-controls"></audio>
+            <div class="navigation">
+                <button id="back2">&larr; Back</button>
+                <button id="next2">Next &rarr;</button>
             </div>
+        </div>
 
-            <!-- Engagement Trends -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-4">
-                <h2 class="text-2xl font-semibold section-title text-white">Engagement Over Time</h2>
-                <canvas id="engagementTrendsChart" class="w-full"></canvas>
+        <!-- Step 3: Record Track -->
+        <div id="step3" class="step">
+            <h1>Record Track</h1>
+            <div class="chart-container">
+                <canvas id="recordingChart"></canvas>
+            </div>
+            <div class="audio-controls">
+                <button id="startRecording">Start</button>
+                <button id="stopRecording" disabled>Stop</button>
+            </div>
+            <div class="navigation">
+                <button id="back3">&larr; Back</button>
+                <button id="next3">Next &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Engagement Dashboard Results -->
+        <div id="step4" class="step">
+            <h1>Engagement Dashboard Results</h1>
+            <div class="chart-container">
+                <canvas id="engagementChart"></canvas>
+            </div>
+            <div class="navigation">
+                <button id="back4">&larr; Back</button>
+                <button id="next4">Next &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Real-Time Data Visualization -->
+        <div id="step5" class="step">
+            <h1>Real-Time Data</h1>
+            <div class="chart-container">
+                <canvas id="realTimeChart"></canvas>
+            </div>
+            <div class="navigation">
+                <button id="back5">&larr; Back</button>
             </div>
         </div>
     </div>
 
     <script>
-        const audioChunks = [];
-        let mediaRecorder;
+        const steps = document.querySelectorAll('.step');
+        let currentStep = 0;
 
-        const uploadButton = document.getElementById('uploadButton');
-        const recordButton = document.getElementById('recordButton');
-        const stopButton = document.getElementById('stopButton');
-        const analyzeButton = document.getElementById('analyzeButton');
-        const audioPreview = document.getElementById('audioPreview');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-
-        uploadButton.addEventListener('click', () => {
-            console.log('Upload button clicked');
-            document.getElementById('audioUpload').click();
-        });
-
-        document.getElementById('audioUpload').addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                console.log('Audio file uploaded:', file.name);
-                const url = URL.createObjectURL(file);
-                audioPreview.src = url;
-                audioPreview.load();
-            }
-        });
-
-        recordButton.addEventListener('click', async () => {
-            console.log('Start recording button clicked');
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-
-                mediaRecorder.ondataavailable = (event) => {
-                    console.log('Recording data available');
-                    audioChunks.push(event.data);
-                };
-
-                mediaRecorder.onstop = () => {
-                    console.log('Recording stopped');
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const url = URL.createObjectURL(audioBlob);
-                    audioPreview.src = url;
-                    audioPreview.load();
-                };
-
-                mediaRecorder.start();
-                recordButton.disabled = true;
-                stopButton.disabled = false;
-            } catch (error) {
-                console.error('Error accessing media devices:', error);
-                alert('Could not access microphone. Please try again.');
-            }
-        });
-
-        stopButton.addEventListener('click', () => {
-            console.log('Stop recording button clicked');
-            mediaRecorder.stop();
-            recordButton.disabled = false;
-            stopButton.disabled = true;
-        });
-
-        analyzeButton.addEventListener('click', async () => {
-            console.log('Analyze audio button clicked');
-            const audioFile = document.getElementById('audioUpload').files[0];
-            if (!audioFile && audioChunks.length === 0) {
-                console.warn('No audio file or recording available for analysis');
-                alert('Please upload or record an audio file first.');
-                return;
-            }
-
-            loadingSpinner.classList.remove('hidden');
-            console.log('Audio analysis started');
-
-            try {
-                const arrayBuffer = audioFile
-                    ? await audioFile.arrayBuffer()
-                    : await new Blob(audioChunks, { type: 'audio/wav' }).arrayBuffer();
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-                console.log('Audio data decoded successfully');
-
-                const audioDuration = audioBuffer.duration;
-                console.log('Audio duration:', audioDuration);
-
-                const engagementLevels = [
-                    Math.random() * 10,
-                    Math.random() * 10,
-                    Math.random() * 10,
-                    Math.random() * 10,
-                ];
-                console.log('Generated engagement levels:', engagementLevels);
-
-                const overallEngagement = [
-                    (engagementLevels.reduce((a, b) => a + b, 0) / 4) * 10,
-                    100 - (engagementLevels.reduce((a, b) => a + b, 0) / 4) * 10,
-                ];
-                console.log('Overall engagement:', overallEngagement);
-
-                const engagementTrends = {
-                    labels: Array.from({ length: Math.floor(audioDuration / 5) }, (_, i) => `${i * 5}s`),
-                    data: Array.from({ length: Math.floor(audioDuration / 5) }, () => Math.random() * 100),
-                };
-                console.log('Engagement trends:', engagementTrends);
-
-                updateCharts({
-                    levels: engagementLevels,
-                    overall: overallEngagement,
-                    trends: engagementTrends,
-                });
-
-                alert('Audio analysis completed successfully!');
-            } catch (error) {
-                console.error('Error during audio analysis:', error);
-                alert('Failed to analyze audio. Please try again.');
-            } finally {
-                loadingSpinner.classList.add('hidden');
-                console.log('Audio analysis finished');
-            }
-        });
-
-        function updateCharts({ levels, overall, trends }) {
-            console.log('Updating charts with new data');
-
-            new Chart(document.getElementById('overallEngagementChart').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: overall,
-                        backgroundColor: ['#3B82F6', '#1F2937'],
-                    }],
-                },
-                options: { cutout: '70%', plugins: { tooltip: { enabled: false } } },
+        document.querySelectorAll('.navigation button').forEach((button) => {
+            button.addEventListener('click', (e) => {
+                if (e.target.id.includes('next')) {
+                    if (currentStep < steps.length - 1) {
+                        steps[currentStep].classList.remove('active');
+                        currentStep++;
+                        steps[currentStep].classList.add('active');
+                    }
+                } else if (e.target.id.includes('back')) {
+                    if (currentStep > 0) {
+                        steps[currentStep].classList.remove('active');
+                        currentStep--;
+                        steps[currentStep].classList.add('active');
+                    }
+                }
             });
+        });
 
-            new Chart(document.getElementById('engagementDimensionsChart').getContext('2d'), {
-                type: 'radar',
-                data: {
-                    labels: ['Physical', 'Emotional', 'Mental', 'Spiritual'],
-                    datasets: [{
-                        label: 'Engagement Levels',
-                        data: levels,
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: '#3B82F6',
-                        pointBackgroundColor: '#3B82F6',
-                    }],
-                },
-                options: { scale: { r: { beginAtZero: true, max: 10 } } },
-            });
+        // Chart setup for Recording Step
+        const recordingCtx = document.getElementById('recordingChart').getContext('2d');
+        const recordingChart = new Chart(recordingCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 10 }, (_, i) => i),
+                datasets: [{
+                    label: 'Recording Data',
+                    data: Array.from({ length: 10 }, () => Math.random() * 100),
+                    borderColor: '#007BFF',
+                }]
+            },
+        });
 
-            new Chart(document.getElementById('engagementTrendsChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: trends.labels,
-                    datasets: [{
-                        label: 'Engagement Level',
-                        data: trends.data,
-                        borderColor: '#3B82F6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    }],
-                },
-            });
+        // Chart setup for Engagement Dashboard Results
+        const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+        const engagementChart = new Chart(engagementCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mental', 'Spiritual', 'Emotional', 'Physical'],
+                datasets: [{
+                    label: 'Engagement Levels',
+                    data: [50, 75, 65, 80],
+                    backgroundColor: ['#007BFF', '#28A745', '#FFC107', '#DC3545'],
+                }]
+            },
+        });
 
-            console.log('Charts updated successfully');
-        }
+        // Chart setup for Real-Time Data Visualization
+        const realTimeCtx = document.getElementById('realTimeChart').getContext('2d');
+        const realTimeChart = new Chart(realTimeCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 10 }, (_, i) => `00:0${i}`),
+                datasets: [
+                    {
+                        label: 'Physical',
+                        data: Array.from({ length: 10 }, () => Math.random() * 100),
+                        borderColor: '#007BFF',
+                    },
+                    {
+                        label: 'Emotional',
+                        data: Array.from({ length: 10 }, () => Math.random() * 100),
+                        borderColor: '#28A745',
+                    },
+                ]
+            },
+        });
     </script>
 </body>
 </html>
