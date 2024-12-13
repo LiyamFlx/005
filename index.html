@@ -112,12 +112,14 @@
         const loadingSpinner = document.getElementById('loadingSpinner');
 
         uploadButton.addEventListener('click', () => {
+            console.log('Upload button clicked');
             document.getElementById('audioUpload').click();
         });
 
         document.getElementById('audioUpload').addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
+                console.log('Audio file uploaded:', file.name);
                 const url = URL.createObjectURL(file);
                 audioPreview.src = url;
                 audioPreview.load();
@@ -125,15 +127,18 @@
         });
 
         recordButton.addEventListener('click', async () => {
+            console.log('Start recording button clicked');
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
 
                 mediaRecorder.ondataavailable = (event) => {
+                    console.log('Recording data available');
                     audioChunks.push(event.data);
                 };
 
                 mediaRecorder.onstop = () => {
+                    console.log('Recording stopped');
                     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                     const url = URL.createObjectURL(audioBlob);
                     audioPreview.src = url;
@@ -150,19 +155,23 @@
         });
 
         stopButton.addEventListener('click', () => {
+            console.log('Stop recording button clicked');
             mediaRecorder.stop();
             recordButton.disabled = false;
             stopButton.disabled = true;
         });
 
         analyzeButton.addEventListener('click', async () => {
+            console.log('Analyze audio button clicked');
             const audioFile = document.getElementById('audioUpload').files[0];
             if (!audioFile && audioChunks.length === 0) {
+                console.warn('No audio file or recording available for analysis');
                 alert('Please upload or record an audio file first.');
                 return;
             }
 
             loadingSpinner.classList.remove('hidden');
+            console.log('Audio analysis started');
 
             try {
                 const arrayBuffer = audioFile
@@ -171,21 +180,30 @@
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
+                console.log('Audio data decoded successfully');
+
                 const audioDuration = audioBuffer.duration;
+                console.log('Audio duration:', audioDuration);
+
                 const engagementLevels = [
                     Math.random() * 10,
                     Math.random() * 10,
                     Math.random() * 10,
                     Math.random() * 10,
                 ];
+                console.log('Generated engagement levels:', engagementLevels);
+
                 const overallEngagement = [
                     (engagementLevels.reduce((a, b) => a + b, 0) / 4) * 10,
                     100 - (engagementLevels.reduce((a, b) => a + b, 0) / 4) * 10,
                 ];
+                console.log('Overall engagement:', overallEngagement);
+
                 const engagementTrends = {
                     labels: Array.from({ length: Math.floor(audioDuration / 5) }, (_, i) => `${i * 5}s`),
                     data: Array.from({ length: Math.floor(audioDuration / 5) }, () => Math.random() * 100),
                 };
+                console.log('Engagement trends:', engagementTrends);
 
                 updateCharts({
                     levels: engagementLevels,
@@ -199,10 +217,13 @@
                 alert('Failed to analyze audio. Please try again.');
             } finally {
                 loadingSpinner.classList.add('hidden');
+                console.log('Audio analysis finished');
             }
         });
 
         function updateCharts({ levels, overall, trends }) {
+            console.log('Updating charts with new data');
+
             new Chart(document.getElementById('overallEngagementChart').getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -241,6 +262,8 @@
                     }],
                 },
             });
+
+            console.log('Charts updated successfully');
         }
     </script>
 </body>
