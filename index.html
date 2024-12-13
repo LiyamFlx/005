@@ -33,50 +33,55 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .section-title {
+            border-bottom: 2px solid #4a5568;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen p-6 custom-scrollbar">
     <div class="container mx-auto max-w-7xl">
         <header class="mb-8">
-            <h1 class="text-4xl font-bold text-center text-white mb-4">EngageSense Dashboard</h1>
-            <p class="text-center text-gray-400 mb-6">Analyze real-time audience engagement with AI</p>
+            <h1 class="text-5xl font-extrabold text-center text-white mb-6">EngageSense Dashboard</h1>
+            <p class="text-center text-gray-400 text-lg">Analyze real-time audience engagement with AI</p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Audio Controls -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg col-span-full">
-                <h2 class="text-xl font-semibold mb-4 text-white">Audio Controls</h2>
-                <div class="flex space-x-4">
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-4">
+                <h2 class="text-2xl font-semibold section-title text-white">Audio Controls</h2>
+                <div class="flex flex-wrap gap-4">
                     <input type="file" id="audioUpload" accept="audio/*" class="hidden">
-                    <button id="uploadButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload Audio</button>
-                    <button id="recordButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Start Recording</button>
-                    <button id="stopButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" disabled>Stop Recording</button>
-                    <button id="analyzeButton" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">Analyze Audio</button>
+                    <button id="uploadButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">Upload Audio</button>
+                    <button id="recordButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded">Start Recording</button>
+                    <button id="stopButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded" disabled>Stop Recording</button>
+                    <button id="analyzeButton" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded">Analyze Audio</button>
                 </div>
-                <audio id="audioPreview" controls class="mt-4 w-full"></audio>
-                <div id="loadingSpinner" class="hidden mt-4 flex justify-center items-center">
+                <audio id="audioPreview" controls class="mt-6 w-full"></audio>
+                <div id="loadingSpinner" class="hidden mt-6 flex justify-center items-center">
                     <div class="spinner"></div>
                 </div>
             </div>
 
             <!-- Overall Engagement Score -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-semibold mb-4 text-white">Overall Engagement</h2>
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-2">
+                <h2 class="text-2xl font-semibold section-title text-white">Overall Engagement</h2>
                 <div class="text-center">
                     <canvas id="overallEngagementChart" class="mx-auto" width="200" height="200"></canvas>
-                    <p id="overallEngagementScore" class="text-3xl font-bold text-blue-400 mt-4">0</p>
+                    <p id="overallEngagementScore" class="text-4xl font-bold text-blue-400 mt-6">0</p>
                 </div>
             </div>
 
             <!-- Engagement Dimensions -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <h2 class="text-xl font-semibold mb-4 text-white">Engagement Dimensions</h2>
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-2">
+                <h2 class="text-2xl font-semibold section-title text-white">Engagement Dimensions</h2>
                 <canvas id="engagementDimensionsChart" class="w-full"></canvas>
             </div>
 
             <!-- Engagement Trends -->
-            <div class="bg-gray-800 rounded-lg p-6 shadow-lg col-span-full">
-                <h2 class="text-xl font-semibold mb-4 text-white">Engagement Over Time</h2>
+            <div class="bg-gray-800 rounded-lg p-6 shadow-lg lg:col-span-4">
+                <h2 class="text-2xl font-semibold section-title text-white">Engagement Over Time</h2>
                 <canvas id="engagementTrendsChart" class="w-full"></canvas>
             </div>
         </div>
